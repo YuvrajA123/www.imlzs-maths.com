@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>10SEC-NEXT-WORKING TRIGOMIX GAME-1</title>
+  
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Game</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
+
+        /* CSS Variables for Light and Dark Themes */
+        :root {
+            --background-color: #e0e5ec;
+            --card-color: #ffffff;
+            --text-color: #333333;
+            --btn-color: #6200ea;
+            --btn-text-color: #ffffff;
+            --btn-hover-color: #3700b3;
+            --option-bg-color: #ffffff;
+            --option-text-color: #333333;
+            --score-color: #21a87d;
+            --timer-color: #ff7272;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --correct-color: #d4edda;
+            --incorrect-color: #f8d7da;
+            --result-text-color: #155724;
+            --result-error-color: #721c24;
+        }
+
+        body.dark-mode {
+            --background-color: #121212;
+            --card-color: #1e1e1e;
+            --text-color: #ffffff;
+            --btn-color: #bb86fc;
+            --btn-text-color: #121212;
+            --btn-hover-color: #3700b3;
+            --option-bg-color: #2c2c2c;
+            --option-text-color: #ffffff;
+            --score-color: #21a87d;
+            --timer-color: #ff7272;
+            --shadow-color: rgba(255, 255, 255, 0.1);
+            --correct-color: #2e7d32;
+            --incorrect-color: #c62828;
+            --result-text-color: #81c784;
+            --result-error-color: #e57373;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 50px;
+            height: 100vh;
+            background: var(--background-color);
+            margin: 0;
+            font-family: "Nunito Sans", sans-serif;
+            color: var(--text-color);
+            transition: background 0.3s, color 0.3s;
+            position: relative;
+        }
+
+        /* Dark Mode Toggle Switch */
+        .toggle-switch {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .toggle-switch input {
+            display: none;
+        }
+
+        .slider {
+            width: 50px;
+            height: 24px;
+            background-color: #ccc;
+            border-radius: 34px;
+            position: relative;
+            transition: background-color 0.4s;
+        }
+
+        .slider::before {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.4s;
+        }
+
+        input:checked + .slider {
+            background-color: #6200ea;
+        }
+
+        input:checked + .slider::before {
+            transform: translateX(26px);
+        }
+
+        .card {
+            background: var(--card-color);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px var(--shadow-color);
+            text-align: center;
+            width: 90%;
+            max-width: 500px;
+            transition: background 0.3s, box-shadow 0.3s;
+        }
+
+        .btn-container {
+            margin-top: 20px;
+        }
+
+        .custom-btn {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 180px;
+            height: 60px;
+            background-color: var(--btn-color);
+            color: var(--btn-text-color);
+            text-decoration: none;
+            font-size: 24px;
+            letter-spacing: 2px;
+            border-radius: 30px;
+            border: none;
+            box-shadow: 12px 12px 16px 0 #c6bacf, -12px -12px 16px 0 #f2ebfc, inset 0 0 0 0 transparent;
+            transition: box-shadow 200ms, transform 300ms cubic-bezier(.2,2,1,1), background-color 0.3s, color 0.3s;
+            cursor: pointer;
+        }
+
+        body.dark-mode .custom-btn {
+            box-shadow: 12px 12px 16px 0 rgba(0,0,0,0.5), -12px -12px 16px 0 rgba(255,255,255,0.1), inset 0 0 0 0 transparent;
+        }
+
+        .custom-btn:hover {
+            background-color: var(--btn-hover-color);
+            color: var(--btn-text-color);
+        }
+
+        .custom-btn:active {
+            box-shadow: 0 0 0 transparent, 0 0 0 transparent, inset 8px 8px 12px 0px rgba(198, 186, 207, .9), inset -8px -8px 12px 0px rgba(242, 235, 252, 0.9);
+            transform: scale(.95);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .grid-item {
+            background: var(--option-bg-color);
+            padding: 20px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: transform 0.6s, background-color 0.3s, color 0.3s;
+        }
+
+        .score, .timer {
+            font-size: 24px;
+        }
+
+        .score {
+            color: var(--score-color);
+        }
+
+        .timer {
+            color: var(--timer-color);
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-btn {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background: var(--option-bg-color);
+            color: var(--option-text-color);
+            cursor: pointer;
+            transition: background 0.3s, color 0.3s, border-color 0.3s;
+            font-size: 18px;
+        }
+
+        .option-btn:hover {
+            background: #f0f0f0;
+        }
+
+        body.dark-mode .option-btn:hover {
+            background: #3a3a3a;
+        }
+
+        .result-card {
+            display: none;
+        }
+
+        /* Highlight Correct and Incorrect Answers */
+        .correct {
+            background-color: var(--correct-color);
+            color: var(--result-text-color);
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .incorrect {
+            background-color: var(--incorrect-color);
+            color: var(--result-error-color);
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        /* Responsive Adjustments */
+        @media (min-width: 600px) {
+            .grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .grid-item {
+                font-size: 24px;
+            }
+        }
+
+        /* Result Page Styling */
+        #answers-history p {
+            text-align: left;
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        body.dark-mode #answers-history p {
+            border-bottom: 1px solid #555;
+        }
+
+        #answers-history strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Dark Mode Toggle Switch -->
+    <label class="toggle-switch">
+        <input type="checkbox" id="darkModeToggle">
+        <span class="slider"></span>
+    </label>
+
+    <!-- Home Page -->
+    <div class="card" id="home-page">
+        <h1>Welcome to the Quiz Game!</h1>
+        <div class="btn-container">
+            <a href="#" class="custom-btn" onclick="startGame()">Start Game</a>
+        </div>
+    </div>
+
+    <!-- Instructions Page -->
+    <div class="card" id="instructions-page" style="display: none;">
+        <h2>Instructions</h2>
+        <p>You have 10 questions with 4 options each.</p>
+        <p>Answer each question in 10 seconds.</p>
+        <p>Achieve 20 points or above to pass.</p>
+        <p>Scoring:</p>
+        <ul style="text-align: left;">
+            <li>+ 4 points (Correct answer)</li>
+            <li>- 2 points (Incorrect answer)</li>
+            <li>- 3 points (Unattempted/Timeout)</li>
+        </ul>
+        <p>Good luck!</p>
+        <div class="btn-container">
+            <a href="#" class="custom-btn" onclick="showGamePage()">Continue</a>
+        </div>
+    </div>
+
+    <!-- Game Page -->
+    <div class="card" id="game-page" style="display: none;">
+        <div class="score">Score: <span id="score">0</span></div>
+        <div class="timer">Time: <span id="timer">5</span> sec</div>
+        <div class="grid">
+            <div class="grid-item" id="question">Question</div>
+        </div>
+        <div class="options">
+            <button class="option-btn" onclick="selectOption(0)">Option 1</button>
+            <button class="option-btn" onclick="selectOption(1)">Option 2</button>
+            <button class="option-btn" onclick="selectOption(2)">Option 3</button>
+            <button class="option-btn" onclick="selectOption(3)">Option 4</button>
+        </div>
+    </div>
+
+    <!-- Result Page -->
+    <div class="card result-card" id="result-page">
+        <h2>Game Over</h2>
+        <p>Final Score: <span id="final-score">0</span></p>
+        <div id="answers-history"></div>
+        <div class="btn-container">
+            <a href="#" class="custom-btn" id="result-button" onclick="restartGame()">Try Again</a>
+        </div>
+    </div>
+
+    <script>
+        // Questions Data
+        const questions = [
+            { question: "Sin 45°", options: ["1/√3", "1/2", "1/√2", "1"], answer: 2 },
+            { question: "sec θ=2, θ=?", options: ["30°", "60°", "45°", "90°"], answer: 1 },
+            { question: "sin θ / cos θ", options: ["cot θ", "tan²θ", "sec θ", "tan θ"], answer: 3 },
+            { question: "1 / cosec θ", options: ["cot θ", "cos θ", "sec θ", "sin θ"], answer: 3 },
+            { question: "sin2θ / cos2θ", options: ["tan θ", "tan2θ", "cot θ", "cot2θ"], answer: 1 },
+            { question: "adj / opp", options: ["cot θ", "cos θ", "sec θ", "sin θ"], answer: 0 },
+            { question: "135° , which quadrant?", options: ["4th", "2nd", "1st", "3rd"], answer: 1 },
+            { question: "Sec²θ - tan²θ", options: ["cot θ", "1", "1/2", "sin θ"], answer: 1 },
+            { question: "4th quadrant cosec θ +ve or -ve", options: ["+ve", "-ve", "±ve", "0"], answer: 0 },
+            { question: "2π/3 in degree", options: ["90°", "270°", "120°", "150°"], answer: 2 }
+        ];
+
+        const backupQuestions = [
+    { question: "Value of cos 60°", options: ["1", "1/2", "√3/2", "0"], answer: 1 },
+    { question: "sin 90° is equal to?", options: ["1", "0", "-1", "1/2"], answer: 0 },
+    { question: "tan θ = sin θ / ?", options: ["cos θ", "cot θ", "sec θ", "cosec θ"], answer: 0 },
+    { question: "cot θ = 1 / ?", options: ["tan θ", "sec θ", "cos θ", "sin θ"], answer: 0 },
+    { question: "Which quadrant is 225° in?", options: ["1st", "2nd", "3rd", "4th"], answer: 2 },
+    { question: "Value of sec 0°", options: ["0", "1", "undefined", "-1"], answer: 1 },
+    { question: "tan²θ + 1 equals?", options: ["cot²θ", "1", "sin²θ", "sec²θ"], answer: 3 },
+    { question: "cosec²θ - cot²θ equals?", options: ["sec²θ", "sin²θ", "1", "0"], answer: 2 },
+    { question: "The value of sin 45° + cos 45°", options: ["1", "2", "√2", "1 + √2"], answer: 2 },
+    { question: "π radians in degrees?", options: ["90°", "180°", "360°", "270°"], answer: 1 }
+        ];
+      
+      // New Question Set for "Next" Option (Trigonometry, Class 10 and 11)
+      const nextQuestionsSet1 = [
+            { question: "1 / sin θ", options: ["cos θ", "sec θ", "cosec θ", "cot θ"], answer: 2 },
+            { question: "adj / hyp", options: ["cot θ", "cosec θ", "sec θ", "cos θ"], answer: 3 },
+            { question: "3π/2 in degree", options: ["90°", "270°", "120°", "150°"], answer: 1 },
+            { question: "1 - sin²θ", options: ["cos 2θ", "cosec²θ", "cos²θ", "sec²θ"], answer: 2 },
+            { question: "2cos²θ - 1", options: ["cos²θ", "cosec²θ", "cos 2θ", "sec²θ"], answer: 2 },
+            { question: "sin 60°", options: ["1/√2", "√3/2", "1/2", "√2"], answer: 1 },
+            { question: "Adj/hyp= sin θ", options: ["true", "false", "tan θ", "cosec θ"], answer: 0 },
+            { question: "1 / cos θ", options: ["sin θ", "sec θ", "cosec θ", "cot θ"], answer: 1 },
+            { question: "Tan 30°", options: ["√2", "√3", "1/√3", "1/√2"], answer: 2 },
+            { question: "Cot θ = 1/√3, θ=?", options: ["30°", "60°", "45°", "90°"], answer: 0 }
+    // Add more advanced or mixed questions here...
+];
+
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let timer;
+        let timeLeft = 10;
+        let questionsSet = questions.slice(); // Clone the questions array
+        let userAnswers = Array(questionsSet.length).fill(null);
+
+        // Start Game
+        function startGame() {
+            document.getElementById('home-page').style.display = 'none';
+            document.getElementById('instructions-page').style.display = 'block';
+        }
+
+        // Show Game Page
+        function showGamePage() {
+            document.getElementById('instructions-page').style.display = 'none';
+            document.getElementById('game-page').style.display = 'block';
+            loadQuestion();
+            startTimer();
+        }
+
+        // Load Current Question
+        function loadQuestion() {
+            const questionData = questionsSet[currentQuestionIndex];
+            document.getElementById('question').innerText = questionData.question;
+            const options = document.querySelectorAll('.option-btn');
+            options.forEach((btn, index) => {
+                btn.innerText = questionData.options[index];
+                btn.classList.remove('correct', 'incorrect');
+            });
+            // Optional: Add animation or visual effect
+        }
+
+        // Start Timer
+         function startTimer() {
+          timeLeft = 10; // Set time limit to 10 seconds
+         document.getElementById('timer').innerText = timeLeft;
+         timer = setInterval(() => {
+              timeLeft--;
+            document.getElementById('timer').innerText = timeLeft;
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                handleTimeout();
+            }
+        }, 1000);
+      }
+
+
+        // Handle Timeout (No Answer Selected)
+        function handleTimeout() {
+            score -= 3;
+            updateScore();
+            userAnswers[currentQuestionIndex] = null; // No answer selected
+            nextQuestion();
+        }
+
+        // Select Option
+        function selectOption(index) {
+            clearInterval(timer);
+            const questionData = questionsSet[currentQuestionIndex];
+            const selectedButton = document.querySelectorAll('.option-btn')[index];
+            userAnswers[currentQuestionIndex] = index; // Record user's answer
+
+            if (index === questionData.answer) {
+                score += 4;
+                selectedButton.classList.add('correct');
+            } else {
+                score -= 2;
+                selectedButton.classList.add('incorrect');
+                // Optionally, highlight the correct answer
+                const correctButton = document.querySelectorAll('.option-btn')[questionData.answer];
+                correctButton.classList.add('correct');
+            }
+            updateScore();
+            setTimeout(nextQuestion, 1000); // Delay to show feedback
+        }
+
+        // Update Score Display
+        function updateScore() {
+            document.getElementById('score').innerText = score;
+        }
+
+        // Proceed to Next Question or End Game
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questionsSet.length) {
+                loadQuestion();
+                startTimer();
+            } else {
+                endGame();
+            }
+        }
+
+        // End Game and Show Results
+        function endGame() {
+    document.getElementById('game-page').style.display = 'none';
+    document.getElementById('result-page').style.display = 'block';
+    document.getElementById('final-score').innerText = score;
+
+    // Generate Answers History
+    const answersHistory = questionsSet.map((q, index) => {
+        const userAnswer = userAnswers[index];
+        const isCorrect = userAnswer === q.answer;
+        const userAnswerText = userAnswer !== null ? q.options[userAnswer] : 'No Answer';
+        const correctAnswerText = q.options[q.answer];
+        return `
+            <p>
+                <strong>Q${index + 1}:</strong> ${q.question}<br>
+                <strong>Your Answer:</strong> ${userAnswerText} 
+                ${isCorrect ? `<span class="correct">✔️ Correct</span>` : userAnswer !== null ? `<span class="incorrect">❌ Incorrect</span>` : ''}
+                <br>
+                <strong>Correct Answer:</strong> ${correctAnswerText}
+            </p>
+        `;
+    }).join('');
+    document.getElementById('answers-history').innerHTML = answersHistory;
+
+    // Update Result Button Based on Score
+    const resultButton = document.getElementById('result-button');
+    if (score >= 20) {
+        resultButton.innerText = 'Next';
+        resultButton.onclick = loadMoreQuestions; // Load more questions if passing score
+    } else {
+        resultButton.innerText = 'Try Again';
+        resultButton.onclick = restartGame; // Restart game if failed
+    }
+}
+
+
+        // Restart Game with Backup Questions
+        function restartGame() {
+            currentQuestionIndex = 0;
+            score = 0;
+            questionsSet = nextQuestionsSet1.slice(); // Clone the backup questions
+            userAnswers = Array(questionsSet.length).fill(null);
+            document.getElementById('result-page').style.display = 'none';
+            document.getElementById('game-page').style.display = 'block';
+            document.getElementById('score').innerText = score;
+            loadQuestion();
+            startTimer();
+        }
+      
+        // Load More Questions for Advanced Level
+function loadMoreQuestions() {
+    currentQuestionIndex = 0;
+    score = 0;
+    questionsSet = backupQuestions.slice(); // Clone the new questions set
+    userAnswers = Array(questionsSet.length).fill(null);
+    document.getElementById('result-page').style.display = 'none';
+    document.getElementById('game-page').style.display = 'block';
+    document.getElementById('score').innerText = score;
+    loadQuestion();
+    startTimer();
+}
+
+
+        // Dark Mode Toggle Functionality
+        const toggleSwitch = document.getElementById('darkModeToggle');
+        toggleSwitch.addEventListener('change', () => {
+            document.body.classList.toggle('dark-mode');
+            // Optionally, save preference to localStorage
+            // localStorage.setItem('darkMode', toggleSwitch.checked);
+        });
+
+        // Optional: Load Dark Mode Preference from localStorage
+        // window.addEventListener('DOMContentLoaded', () => {
+        //     const darkMode = localStorage.getItem('darkMode') === 'true';
+        //     toggleSwitch.checked = darkMode;
+        //     if (darkMode) {
+        //         document.body.classList.add('dark-mode');
+        //     }
+        // });
+    </script>
+</body>
+</html>
+<!-- partial -->
+  
+</body>
+</html>
